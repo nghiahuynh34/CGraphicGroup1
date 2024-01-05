@@ -67,6 +67,15 @@ void ReShape(int width, int height)
 		 eyeZ=0.0;
         glutPostRedisplay();
         break;
+        case 'r':
+        posX-=5;
+		 posY=40.0;
+		 posZ-=5;
+		 eyeX =0.0;
+		 eyeY=1.0;
+		 eyeZ=0.0;
+        glutPostRedisplay();
+        break;
     case 'x':
         posX+=5;
 		 posY=40.0;
@@ -105,7 +114,7 @@ void ReShape(int width, int height)
         glutPostRedisplay();
         break;
     case 'q':
-        g_angle_quick+=0.3;
+        g_angle_quick+=0.02;
         if(g_angle_quick>=2){
         	g_angle_quick=0;
 		}
