@@ -43,8 +43,8 @@ GLuint g_CirleTextureID;
 
 const int numPlanets = 9;
 //float planetRadii[numPlanets] = {0.2f, 0.1f, 0.15f,0.2f, 0.1f, 0.15f};
-float planetDistances[numPlanets] = {0.0f,10.0f,15.0f,20.0f, 25.0f, 32.0f,42.0f,50.0f,56.0f};
-float circleDistances[numPlanets] = {3.0f,3.5f,3.7f,3.9f, 4.0f,4.25f, 4.5f,4.75f,5.0f};
+float planetDistances[numPlanets] = {0.0f,15.0f,22.0f,30.0f, 37.0f, 47.0f,60.0f,70.0f,77.0f};
+float circleDistances[12] = { 4.0f,4.25f,4.3f, 4.5f,4.75f,4.8f,4.9f,5.0f,5.1f,5.15f,5.20f,5.25f};
 
 // Insert name: Kieu 
 GLubyte rastersK[32] = {
@@ -142,7 +142,6 @@ GLubyte rastersD[32] = {
 0x00, 0x00
 };
 
-
 // Insert name: Nghia
 GLubyte rasters[42] = { 0x00,0x00, 0x00,0x00, 0x00,0x00, 0x70,0x40,0x88,0xa0, 0x84,0xa0, 0x94,0xa0, 0x64,0xa0, 0x04,0xa0,0x04,0xa0, 0x05,0x20, 0x05,0x20, 0x25,0x20, 0x45,0x22, 0x45,0x25, 0x25,0x21, 0x1a,0x11, 0x00,0x0e, 0x00,0x00, 0x00,0x00, 0x00,0x00
 };
@@ -197,18 +196,19 @@ GLubyte uraster[36] = {
     0x01,0xd0,0x02,0x28,0x04,0x24,0x04,0x23,0x04,0x26,0x04,0x2a,0x04,0x24,0x04,0x20,0x44,
     0x20,0x84,0x20,0x64,0x20,0x44,0x28,0x84,0x24,0x84,0x22,0x44,0x22,0x24,0x12,0x1c,0x0c
 };
+
 void display_Name()
 {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    gluOrtho2D(0, 800, 0, 800); // Adjust screenWidth and screenHeight accordingly
+    glOrtho(0, 800, 0, 800,-1,1); // Adjust screenWidth and screenHeight accordingly
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-
+	
     glColor3f(1.0, 1.0, 1.0);
-    glRasterPos2f(5, 800 - 10); // Adjust position as needed
+    glRasterPos2f(5, 790); // Adjust position as needed
     glBitmap(16, 16, -28.0, 1.0, 0.0, -16.0, rastersD);
     glBitmap(16, 16, 0.0, 0.0, 15.0, 0.0, rastersK);
     glBitmap(16, 16, 0.0, 0.0, 10.0, 0.0, rastersI);
@@ -235,7 +235,8 @@ void display_Name()
     glMatrixMode(GL_MODELVIEW);
     glFlush();
 
-} void loadPlanetTexture(const char *file, GLuint &ID) {
+} 
+void loadPlanetTexture(const char *file, GLuint &ID) {
  	 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
@@ -245,8 +246,8 @@ void display_Name()
     if (!data) {
     std::cout << "Failed to load texture."<<std::endl;
     return;
-}
- 		glGenTextures(1, &ID);
+	}
+ 	glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
@@ -262,13 +263,14 @@ void loadImage() {
     loadPlanetTexture("sun1.jpg", g_sunTextureID);
     loadPlanetTexture("moon5.jpg", g_moonTextureID);
     loadPlanetTexture("mc7.jpg", g_mercuryTextureID);
-    loadPlanetTexture("v3.jpg", g_venusTextureID);
-    loadPlanetTexture("mars3.jpg", g_marsTextureID);
+    loadPlanetTexture("venus.bmp", g_venusTextureID);
+    loadPlanetTexture("mar.bmp", g_marsTextureID);
     loadPlanetTexture("jp.jpg", g_jumpiterTextureID);
     loadPlanetTexture("st2.jpg", g_santurnTextureID);
-    loadPlanetTexture("u2.jpg", g_uranusTextureID);
+    loadPlanetTexture("uranus.bmp", g_uranusTextureID);
     loadPlanetTexture("n.jpg", g_neptuneTextureID);
     loadPlanetTexture("bg1.jpg", g_backgroundTextureID);
+    loadPlanetTexture("saturnringcolor.bmp", g_CirleTextureID);
 }
 GLuint MakeSphere(const float& radius)
 {
@@ -306,21 +308,25 @@ void renderBitmapString(float x, float y, float z, void *font, const char *strin
 void drawSun(){
 	
 	glPushMatrix();
-	glRotatef (g_angle_mercury, 0.0f,1.0f, 0.0f);
-	glTranslated(0.0, 0.0, 0.0);
-	GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0}; // Cài d?t màu ph?n x?
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	GLfloat shininess = 100.0; // Ð? bóng c?a b? m?t
-	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
-	GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0}; // Cài d?t ánh sáng khu v?c
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	GLfloat constant_attenuation = 1.0;
-	GLfloat linear_attenuation = 0.001;
-	GLfloat quadratic_attenuation = 0.001;
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, constant_attenuation);
-	glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, linear_attenuation);
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, quadratic_attenuation);
-	renderBitmapString(2.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Sun");
+//	GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0}; // Cài d?t màu ph?n x?
+//	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+//	GLfloat shininess = 100.0; // Ð? bóng c?a b? m?t
+//	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+//	GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0}; // Cài d?t ánh sáng khu v?c
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	GLfloat light_pos [] = {1.0, 0.0, 0.0, 0.0};
+	GLfloat light_ambien [] = {0.5, 0.5, 0.5, 1.0};
+	GLfloat diff_use[] = {1.0,1.0, 1.0, 1.0};
+	GLfloat ambient[] = {1.0, 1.0, 1.0, 1.0};
+	GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+		glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambien);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff_use);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+
+	renderBitmapString(9.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_18, "Sun");
 	glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, g_sunTextureID); // S? d?ng g_earthTextureID thay vì g_earthTexture
  	glCallList(g_sun);
@@ -329,27 +335,13 @@ void drawSun(){
     
 	}
 	
-void drawMoon(){
-		
-  glPushMatrix();
-  glRotatef (gl_angle_moon, 0.0f, 1.0f, 0.0f);
-  glTranslated(3.0, 0.0, 0.0);
-  GLfloat mat_ambien3[] = {1.0, 1.0, 1.0, 1.0};
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien3);
-  GLfloat diff3[] = {1.0, 1.0, 1.0, 1.0};
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff3);
- glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, g_moonTextureID); // S? d?ng g_earthTextureID thay vì g_earthTexture
- glCallList(g_moon);
-    glDisable(GL_TEXTURE_2D);
-   renderBitmapString(0.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Moon");
-  glPopMatrix();
-}
-void drawEarth(){
-	glRotatef(g_angle_year, 0.0f, 1.0f, 0.0f);
-  glTranslated(20.0, 0.0, 0.0);
-  glRotatef (g_angle_day, 0.0f, 1.0f, 0.0f);
- 
+void drawEarthMoon(){
+	glPushMatrix();
+	 glRotatef (g_angle_year, 0.0f, 1.0f, 0.0f);
+  glTranslated(30.0, 0.0, 0.0);
+   glRotatef(g_angle_day, 0.0f, 1.0f, 0.0f);
+   GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien2[] = {1.0, 1.0, 1.0f, 1.0f};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien2);
   GLfloat diff2[] = {1.0, 1.0, 1.0f, 1.0f};
@@ -358,14 +350,32 @@ glEnable(GL_TEXTURE_2D);
 glBindTexture(GL_TEXTURE_2D, g_earthTextureID);
   glCallList(g_earth);
   glDisable(GL_TEXTURE_2D);
-	renderBitmapString(1.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Earth");
+	renderBitmapString(2.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Earth");
+	
+ glRotatef (gl_angle_moon, 0.0f, 1.0f, 0.0f);
+  glTranslated(3.0, 0.0, 0.0);
+  GLfloat light_pos2 [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos2);
+  GLfloat mat_ambien3[] = {1.0, 1.0, 1.0, 1.0};
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien3);
+  GLfloat diff3[] = {1.0, 1.0, 1.0, 1.0};
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff3);
+ glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, g_moonTextureID); // S? d?ng g_earthTextureID thay vì g_earthTexture
+ glCallList(g_moon);
+    glDisable(GL_TEXTURE_2D);
+   renderBitmapString(2.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Moon");
+	 glPopMatrix();
 }
 
 void drawMercury(){
 	  
 	glPushMatrix();
+	
   glRotatef (g_angle_mercury, 0.0f, 1.0f, 0.0f);
-  glTranslated(10.0, 0.0, 0.0);
+  glTranslated(15.0, 0.0, 0.0);
+  GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien4[] = {1.0, 1.0, 1.0f, 1.0f};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien4);
   GLfloat diff4[] = {1.0, 1.0, 1.0, 1.0};
@@ -374,17 +384,16 @@ void drawMercury(){
     glBindTexture(GL_TEXTURE_2D, g_mercuryTextureID); // S? d?ng g_earthTextureID thay vì g_earthTexture
  glCallList(g_mercury);
     glDisable(GL_TEXTURE_2D);
-  
-//   glRasterPos3f(1.5, 0.0, 0.0);
-//    glBitmap(16, 16, 0.0, 0.0, 15.0, 0.0, E);
-renderBitmapString(1.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Mercury");
+renderBitmapString(2.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Mercury");
   glPopMatrix();
 }
 void drawMars(){
 	//mars
  glPushMatrix();
   glRotatef (g_angle_mars, 0.0f, 1.0f, 0.0f);
-  glTranslated(25.0, 0.0, 0.0);
+  glTranslated(37.0, 0.0, 0.0);
+  GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien6[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien6);
   GLfloat diff6[] = {1.0, 1.0, 1.0, 1.0};
@@ -394,14 +403,16 @@ void drawMars(){
   glCallList(g_mars);
     glDisable(GL_TEXTURE_2D);
  
-   renderBitmapString(1.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Mars");
+   renderBitmapString(3.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Mars");
   glPopMatrix();
 }
 void drawVenus(){
 	//venus
 glPushMatrix();
   glRotatef (g_angle_venus, 0.0f, 1.0f, 0.0f);
-  glTranslated(15.0, 0.0, 0.0);
+  glTranslated(22.0, 0.0, 0.0);
+  	GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien5[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien5);
   GLfloat diff5[] = {1.0, 1.0, 1.0, 1.0};
@@ -411,13 +422,15 @@ glPushMatrix();
 glCallList(g_venus);
     glDisable(GL_TEXTURE_2D);
   
-   renderBitmapString(1.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Venus");
+   renderBitmapString(2.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Venus");
   glPopMatrix();
 }
 void drawJupiter(){
 	glPushMatrix();
   glRotatef (g_angle_jumpiter, 0.0f, 1.0f, 0.0f);
-  glTranslated(32.0, 0.0, 0.0);
+  glTranslated(47.0, 0.0, 0.0);
+  	GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien7[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien7);
   GLfloat diff7[] = {1.0, 1.0, 1.0, 1.0};
@@ -427,15 +440,17 @@ void drawJupiter(){
  glCallList(g_jumpiter);
     glDisable(GL_TEXTURE_2D);
   
-   renderBitmapString(2.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Jupiter");
+   renderBitmapString(4.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Jupiter");
   glPopMatrix();
 }
 void drawSanturn(){
 	  glPushMatrix();
 //glColor3f(1.0, 0.4, 1.3);  // Set orbit color (gray)
-   
+   	
   glRotatef (g_angle_santurn, 0.0f, 1.0f, 0.0f);
-  glTranslated(42.0, 0.0, 0.0);
+  glTranslated(60.0, 0.0, 0.0);
+  GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien8[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien8);
   GLfloat diff8[] = {1.0, 1.0, 1.0, 1.0};
@@ -443,11 +458,12 @@ void drawSanturn(){
   
  
   glPushAttrib(GL_LINE_BIT);
+  
    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, g_CirleTextureID); 
 //    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glLineWidth(2.5f);
-   for (int i = 1; i < 9; i++) {
+  glLineWidth(3.0f);
+   for (int i = 0; i < 12; i++) {
 //       glBegin(GL_TRIANGLE_FAN);
 glBegin(GL_LINE_LOOP);
         for (int j = 0; j < 360; j++) {
@@ -466,14 +482,16 @@ glBegin(GL_LINE_LOOP);
 // glCallList(g_mercury);
    glCallList(g_santurn);
    glDisable(GL_TEXTURE_2D);
-  renderBitmapString(1.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Saturn");
+  renderBitmapString(5.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Saturn");
   glPopMatrix();
 }
 void drawUranus(){
 	 //uranus
   glPushMatrix();
   glRotatef (g_angle_uranus, 0.0f, 1.0f, 0.0f);
-  glTranslated(50.0, 0.0, 0.0);
+  glTranslated(70.0, 0.0, 0.0);
+  	 GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien9[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien9);
   GLfloat diff9[] = {1.0, 1.0, 1.0, 1.0};
@@ -483,7 +501,7 @@ void drawUranus(){
     glBindTexture(GL_TEXTURE_2D, g_uranusTextureID); // S? d?ng g_earthTextureID thay vì g_earthTexture
  glCallList(g_uranus);
    glDisable(GL_TEXTURE_2D);
-   renderBitmapString(1.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Uranus");
+   renderBitmapString(3.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Uranus");
   glPopMatrix();
 }
 void drawNeptune(){
@@ -491,7 +509,10 @@ void drawNeptune(){
   //neptune
   glPushMatrix();
   glRotatef (g_angle_neptune, 0.0f, 1.0f, 0.0f);
-  glTranslated(56.0, 0.0, 0.0);
+  glTranslated(77.0, 0.0, 0.0);
+  
+  	 GLfloat light_pos [] = {-1.0, 0.0, 0.0, 0.0};
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
   GLfloat mat_ambien10[] = {1.0, 1.0, 1.0, 1.0};
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambien10);
   GLfloat diff10[] = {1.0, 1.0, 1.0, 1.0};
@@ -502,19 +523,17 @@ void drawNeptune(){
  glCallList(g_mercury);
    glCallList(g_neptune);
    glDisable(GL_TEXTURE_2D);
-   renderBitmapString(1.5, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Neptune");
+   renderBitmapString(3.0, 0.0, 0.0, GLUT_BITMAP_HELVETICA_12, "Neptune");
   glPopMatrix();
 }
 void drawBackground() {
 	glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, -1, 1);  // Adjust the values based on your needs
-
+glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-   
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, g_backgroundTextureID);
     
@@ -533,14 +552,15 @@ void drawBackground() {
 }
 void drawOrbits(){
 		// Draw orbits for each planet
+		glLineWidth(1.5f);
     glColor3f(1.0, 1.0, 1.0); 
     for (int i = 1; i < numPlanets; i++) {
         glBegin(GL_LINE_LOOP);
         for (int j = 0; j < 360; j++) {
             float theta = static_cast<float>(j) * M_PI / 180.0;
             float x = planetDistances[i] * cosf(theta);
-            float y = planetDistances[i] * sinf(theta);
-            glVertex3f(x, 0.0, y);
+            float z = planetDistances[i] * sinf(theta);
+            glVertex3f(x, 0.0, z);
         }
         glEnd();
     }
@@ -558,7 +578,7 @@ void turning(GLfloat g_angle_quick = 0){
 	    g_angle_day = 0;
 	  }
 	 
-	  g_angle_year = (g_angle_year + 1+g_angle_quick);
+	  g_angle_year = (g_angle_year + 1 +g_angle_quick);
 	  if (g_angle_year >= 360)
 	  {
 	    g_angle_year = 0;
@@ -578,22 +598,22 @@ void turning(GLfloat g_angle_quick = 0){
 	  {
 	    g_angle_mars = 0;
 	  }
-	    g_angle_jumpiter = (g_angle_jumpiter + 0.07+g_angle_quick);
+	    g_angle_jumpiter = (g_angle_jumpiter + 0.03+g_angle_quick);
 	  if (g_angle_jumpiter >= 360)
 	  {
 	    g_angle_jumpiter = 0;
 	  }
-	   g_angle_santurn = (g_angle_santurn +  0.04+g_angle_quick);
+	   g_angle_santurn = (g_angle_santurn +  0.015+g_angle_quick);
 	  if (g_angle_santurn >= 360)
 	  {
 	    g_angle_santurn = 0;
 	  }
-	   g_angle_uranus = (g_angle_uranus + 0.03+g_angle_quick);
+	   g_angle_uranus = (g_angle_uranus + 0.007+g_angle_quick);
 	  if (g_angle_uranus >= 360)
 	  {
 	    g_angle_uranus = 0;
 	  }
-	   g_angle_neptune = (g_angle_neptune + 0.02+g_angle_quick);
+	   g_angle_neptune = (g_angle_neptune + 0.003+g_angle_quick);
 	  if (g_angle_neptune >= 360)
 	  {
 	    g_angle_neptune = 0;

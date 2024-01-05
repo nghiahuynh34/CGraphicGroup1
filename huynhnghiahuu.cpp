@@ -16,29 +16,6 @@ double planetY = 200.0;
 bool dragging = false;
 bool turn = false;
 
-//void drawStar() {
-//glMatrixMode(GL_PROJECTION);
-//    glPushMatrix();
-//    glLoadIdentity();
-//    gluOrtho2D(0, 800, 0, 800); // Adjust screenWidth and screenHeight accordingly
-//    glMatrixMode(GL_MODELVIEW);
-//    glPushMatrix();
-//    glLoadIdentity();
-//    if (starPositionX != -1 && starPositionY != -1) {
-////    	std::cout<<"ok";
-//        glColor3f(1.0, 1.0, 1.0);  // Màu tr?ng
-//        glBegin(GL_TRIANGLES);
-//        glVertex2d(starPositionX, starPositionY);
-//        glVertex2d(starPositionX - 10, starPositionY - 20);
-//        glVertex2d(starPositionX + 10, starPositionY - 20);
-//        glEnd();
-//    }
-//     glPopMatrix();
-//    glMatrixMode(GL_PROJECTION);
-//    glPopMatrix();
-//    glMatrixMode(GL_MODELVIEW);
-//    glFlush();
-//}
 
 void RendenScene()
 {
@@ -46,8 +23,6 @@ void RendenScene()
 	glLoadIdentity();
 	gluLookAt(posX, posY, posZ, 0.0, 0.0, 0.0, eyeX, eyeY, eyeZ);
 	drawBackground();
- 	glClear(GL_DEPTH_BUFFER_BIT);
-    // Enable depth testing for correct 3D rendering
     glEnable(GL_DEPTH_TEST);
     display_Name();
 	drawOrbits();
@@ -60,8 +35,8 @@ void RendenScene()
 	drawSanturn();
 	drawUranus();
 	drawNeptune();
-	drawEarth();
-	drawMoon();
+	drawEarthMoon();
+	
     glDisable(GL_DEPTH_TEST);
 	if(turn){
 		Sleep(83);
@@ -77,13 +52,13 @@ void ReShape(int width, int height)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   float ratio = (float)width/(float)height;
-  gluPerspective(70.0, ratio, 1, 170.0);
+  gluPerspective(70.0, ratio, 1, 200.0);
   glMatrixMode(GL_MODELVIEW);
 }
  
  void keyboard(unsigned char key, int x, int y) {
     switch (key) {
-    case 'n':
+    case 'y':
         posX+=5;
 		 posY=40.0;
 		 posZ+=5;
@@ -92,6 +67,25 @@ void ReShape(int width, int height)
 		 eyeZ=0.0;
         glutPostRedisplay();
         break;
+    case 'x':
+        posX+=5;
+		 posY=40.0;
+		 posZ+=5;
+		 eyeX =1.0;
+		 eyeY=0.0;
+		 eyeZ=0.0;
+        glutPostRedisplay();
+        break;
+    case 'Z':
+        posX+=5;
+		 posY=40.0;
+		 posZ+=5;
+		 eyeX =0.0;
+		 eyeY=0.0;
+		 eyeZ=1.0;
+        glutPostRedisplay();
+        break;
+    
     case 'a':
         posX=0.0;
 		 posY=70.0;
@@ -111,11 +105,17 @@ void ReShape(int width, int height)
         glutPostRedisplay();
         break;
     case 'q':
-        g_angle_quick+=2;
+        g_angle_quick+=0.3;
+        if(g_angle_quick>=2){
+        	g_angle_quick=0;
+		}
         glutPostRedisplay();
         break;
  	case 's':
-        g_angle_quick-=2;
+        g_angle_quick-=0.005;
+        if(g_angle_quick>-0.02){
+        	g_angle_quick=0;
+		}
         glutPostRedisplay();
         break;
  	case 'z':
@@ -140,7 +140,12 @@ void ReShape(int width, int height)
       	turn=true;
         glutPostRedisplay();
         break;
+    case 'S':
+      	turn=false;
+        glutPostRedisplay();
+        break;
     }
+    
     
 }
 void mouseButton(int button, int state, int x, int y) {
@@ -170,22 +175,12 @@ void Init()
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
+glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-//  glDisable(GL_LIGHTING);
-	GLfloat light_pos [] = {1.0, 1.0, 1.0, 0.0};
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	 
-	GLfloat ambient[] = {1.0, 1.0, 0.0, 1.0};
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-	GLfloat diff_use[] = {0.5, 0.5, 0.0, 1.0};
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff_use);
-	GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-	 
-	GLfloat shininess = 50.0f;
-	glMateriali(GL_FRONT, GL_SHININESS, shininess);
+	glEnable(GL_DEPTH_TEST);
+GLfloat mat_shininess[] = { 50 };
+glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	
 	loadImage();
 	loadPlanet();
 }
