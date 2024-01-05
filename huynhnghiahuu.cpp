@@ -148,28 +148,20 @@ void ReShape(int width, int height)
     
     
 }
-void mouseButton(int button, int state, int x, int y) {
-    if (button == GLUT_LEFT_BUTTON) {
-        if (state == GLUT_DOWN) {
-//        	std::cout<<planetX<<" "<<planetY<<" "<<x<<" "<<y;
-            // Ki?m tra xem chu?t có ? trên hành tinh hay không
-            if(x >= planetX && x <= planetX + 50 && y >= planetY && y <= planetY + 50) {
-                dragging = true;
-                std::cout<<planetX<<" "<<planetY<<" "<<x<<" "<<y;
-            }
-        } else if(state == GLUT_UP) {
-            dragging = false;
-        }
-    }
-}
-void mouseMotion(int x, int y) {
-    if (dragging) {
-        // Di chuy?n hành tinh theo v? trí c?a chu?t
-        planetX = x - 25; // Ði?u ch?nh gi?a hành tinh
-        planetY = glutGet(GLUT_WINDOW_HEIGHT) - y - 25; // Ð?o ngu?c tr?c y
-        std::cout<<planetX<<" "<<planetY;
-    }
-}
+//void mouseButton(int button, int state, int x, int y) {
+//    if (button == GLUT_LEFT_BUTTON) {
+//        if (state == GLUT_DOWN) {
+////        	std::cout<<planetX<<" "<<planetY<<" "<<x<<" "<<y;
+//            // Ki?m tra xem chu?t có ? trên hành tinh hay không
+//            if(x >= planetX && x <= planetX + 50 && y >= planetY && y <= planetY + 50) {
+//                dragging = true;
+//                std::cout<<planetX<<" "<<planetY<<" "<<x<<" "<<y;
+//            }
+//        } else if(state == GLUT_UP) {
+//            dragging = false;
+//        }
+//    }
+//}
 
 void Init()
 {
@@ -179,7 +171,18 @@ glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_DEPTH_TEST);
 GLfloat mat_shininess[] = { 50 };
-glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	GLfloat light_pos [] = {1.0, 1.0, 1.0, 0.0};
+	GLfloat light_ambien [] = {0.2, 0.2, 0.2, 1.0};
+	GLfloat diff_use[] = {1.0,1.0, 1.0, 1.0};
+	GLfloat ambient[] = {1.0, 1.0, 1.0, 1.0};
+	GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff_use);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambien);
 	
 	loadImage();
 	loadPlanet();
@@ -193,8 +196,7 @@ int main(int argc, char ** argv)
   glutInitWindowPosition(250, 100);
   glutCreateWindow("Opengl Study");
   Init();
-  glutMouseFunc(mouseButton);
-  glutMotionFunc(mouseMotion);
+//  glutMouseFunc(mouseButton);
   glutKeyboardFunc(keyboard); 
   glutReshapeFunc(ReShape);
   glutDisplayFunc(RendenScene);
