@@ -172,17 +172,16 @@ glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
 GLfloat mat_shininess[] = { 50 };
 	GLfloat light_pos [] = {1.0, 1.0, 1.0, 0.0};
-	GLfloat light_ambien [] = {0.2, 0.2, 0.2, 1.0};
+	GLfloat light_ambien [] = {0.3, 0.3, 0.3, 1.0};
 	GLfloat diff_use[] = {1.0,1.0, 1.0, 1.0};
 	GLfloat ambient[] = {1.0, 1.0, 1.0, 1.0};
 	GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff_use);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-
-glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambien);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambien);
 	
 	loadImage();
 	loadPlanet();
